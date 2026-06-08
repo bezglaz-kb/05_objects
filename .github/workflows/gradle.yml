@@ -1,0 +1,30 @@
+on:
+  push:
+    branches: [ "main", "master" ] # Запуск при пуше в main или master
+  pull_request:
+    branches: [ "main", "master" ] # Запуск при открытии Pull Request
+
+jobs:
+  build:
+    # Запускаем сборку на чистой виртуальной машине Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Скачиваем код вашего репозитория на виртуальную машину
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Устанавливаем Java (JDK 17 необходим для современных Gradle/Kotlin проектов)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      # 3. Даем права на выполнение файлу gradlew (сборщику проекта)
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # 4. Запускаем сборку и автоматическое выполнение всех ваших тестов
+      - name: Build and run tests
+        run: ./gradlew clean test
